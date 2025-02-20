@@ -43,16 +43,6 @@ public class WikiServlet extends HttpServlet
         return null;
     }
     
-    public void editEntry(Wiki entryToEdit)
-    {
-        Wiki tmp = this.getWikiById(entryToEdit.getId());
-
-        if (tmp != null)
-        {
-            tmp.setEntry(entryToEdit.getEntry(), LocalDateTime.now());
-        }
-    }
-    
     @Override
     public void init(ServletConfig config) throws ServletException
     {
@@ -118,17 +108,20 @@ public class WikiServlet extends HttpServlet
         out.println("<body>");
         out.println("<h1>Wiki</h1>");
         
-        for (Wiki entry : this.getAllEntries())
+        synchronized (this)
         {
-            out.println("<div style='border: 2px solid #ddd; padding: 20px; margin: 15px 0; width: 80%; max-width: 600px; border-radius: 12px; background-color: #f4f4f9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);'>");
-            out.println("<form action='' method='post'>");
-            out.println("<p>ID: " + entry.getId() + " last modified: " + entry.getLastModified() + "</p>");
-            out.println("<input type='hidden' name='lastmodified' value='" + entry.getLastModified() + "'>");
-            out.println("<label for='content' style='font-size: 16px; font-weight: bold; color: #333;'>Bearbeite den Text:</label><br>");
-            out.println("<textarea id='content' name='content' rows='10' style='width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ccc; border-radius: 8px; background-color: #fff; font-size: 14px; resize: vertical;'>" + entry.getEntry() + "</textarea><br>");
-            out.println("<button type='submit' name='id' value='" + entry.getId() + "' style='background-color: #007bff; color: white; padding: 12px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;'>Edit</button>");
-            out.println("</form>");
-            out.println("</div>");
+            for (Wiki entry : this.getAllEntries())
+            {
+                out.println("<div style='border: 2px solid #ddd; padding: 20px; margin: 15px 0; width: 80%; max-width: 600px; border-radius: 12px; background-color: #f4f4f9; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);'>");
+                out.println("<form action='' method='post'>");
+                out.println("<p>ID: " + entry.getId() + " last modified: " + entry.getLastModified() + "</p>");
+                out.println("<input type='hidden' name='lastmodified' value='" + entry.getLastModified() + "'>");
+                out.println("<label for='content' style='font-size: 16px; font-weight: bold; color: #333;'>Text:</label><br>");
+                out.println("<textarea id='content' name='content' rows='10' style='width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ccc; border-radius: 8px; background-color: #fff; font-size: 14px; resize: vertical;'>" + entry.getEntry() + "</textarea><br>");
+                out.println("<button type='submit' name='id' value='" + entry.getId() + "' style='background-color: #007bff; color: white; padding: 12px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s;'>Edit</button>");
+                out.println("</form>");
+                out.println("</div>");
+            }
         }
 
         out.println("</body>");

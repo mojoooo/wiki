@@ -9,12 +9,12 @@ public class Wiki
     private String entry;
     private LocalDateTime lastModified;
 
-    public String getEntry()
+    public synchronized String getEntry()
     {
         return entry;
     }
 
-    public void setEntry(String entry, LocalDateTime newModified)
+    public synchronized void setEntry(String entry, LocalDateTime newModified)
     {
         this.entry = entry;
         this.lastModified = newModified;
